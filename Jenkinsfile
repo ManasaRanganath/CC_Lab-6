@@ -16,14 +16,15 @@ pipeline {
                 sh 'docker rm -f backend1 backend2 || true'
                 sh 'docker run -d --name backend1 backend-app'
                 sh 'docker run -d --name backend2 backend-app'
-                sleep 3
+                sleep 5
             }
         }
         stage('Deploy NGINX Load Balancer') {
             steps {
                 sh 'docker rm -f nginx-lb || true'
-                sh 'docker run -d --name nginx-lb -p 80:80 -v $(pwd)/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro nginx'
-                sleep 2
+                // Mounting the directory to conf.d is the most stable method for this lab
+                sh 'docker run -d --name nginx-lb -p 80:80 -v $(pwd)/nginx:/etc/nginx/conf.d:ro nginx'
+                sleep 5
             }
         }
     }
